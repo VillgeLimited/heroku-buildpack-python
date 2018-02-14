@@ -100,6 +100,29 @@ if [[ ! -f Procfile ]]; then
   puts-warn 'Learn more: https://devcenter.heroku.com/articles/procfile'
 fi
 
+WHITELIST_REGEX='^(DJANGO_PROJ)$'
+
+if [ -d "$ENV_DIR" ]; then
+  for e in $(ls $ENV_DIR); do
+    if [ $(echo "$e" | grep -E "$WHITELIST_REGEX") ]; then
+      export "$e=$(cat $ENV_DIR/$e)"
+    fi
+  done
+fi
+
+if [ ! "$DJANGO_PROJ" ]; then
+    puts-warn 'Warning: Your application is missing a specific DJANGO_PROJ config variable. Using default.'
+    if [ ! $(find . -maxdepth 1 -type f -name 'requirements.txt' | head -1) ]; then
+        puts-error 'Requirements file not found in root.'
+        exit 1
+    fi
+    DJANGO_PROJ="."
+else
+    puts-step "Django app configured: $DJANGO_PROJ"
+fi
+
+export DJANGO_PROJ
+
 # Prepare the cache.
 mkdir -p "$CACHE_DIR"
 
@@ -163,8 +186,9 @@ mtime "python.install.time" "${start}"
 source "$BIN_DIR/steps/pipenv"
 
 # If no requirements.txt file given, assume `setup.py develop` is intended.
-if [ ! -f requirements.txt ] && [ ! -f Pipfile ]; then
-  echo "-e ." > requirements.txt
+# Look in the specific sub_path for this project
+if [ ! -f $DJANGO_PROJ/requirements.txt ] && [ ! -f Pipfile ]; then
+  echo "-e ." > $DJANGO_PROJ/requirements.txt
 fi
 
 # Fix egg-links.

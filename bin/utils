@@ -36,6 +36,10 @@ puts-warn() {
   echo " !     $*"
 }
 
+puts-error() {
+  echo " ! !   ERROR! $*"
+}
+
 # Does some serious copying.
 deep-cp() {
   declare source="$1" target="$2"

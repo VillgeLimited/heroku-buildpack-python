@@ -78,8 +78,17 @@ testPython2() {
 
 testPython3() {
   compile "python3"
+  assertCaptured "Your application is missing a specific DJANGO_PROJ config variable"
   assertCaptured "python-3.6.4"
   assertCapturedSuccess
+}
+
+testPython3DjangoProj() {
+  export DJANGO_PROJ=proj
+  compile "python3"
+  assertCaptured "python-3.6.4"
+  assertCapturedSuccess
+  unset DJANGO_PROJ
 }
 
 testSmartRequirements() {
@@ -103,6 +112,19 @@ testStackChange() {
   assertCapturedSuccess
 }
 
+testPython3Detected() {
+    detect "python3"
+    assertCaptured "Python"
+    assertCapturedSuccess
+}
+
+testPython3DjangoProjDetected() {
+    export DJANGO_PROJ=proj
+    detect "python3"
+    assertCaptured "Python"
+    assertCapturedSuccess
+    unset DJANGO_PROJ
+}
 
 pushd $(dirname 0) >/dev/null
 popd >/dev/null
@@ -117,7 +139,7 @@ mktmpdir() {
 }
 
 detect() {
-  capture $(pwd)/bin/detect $(pwd)/test/fixtures/$1
+   capture $(pwd)/bin/detect $(pwd)/test/fixtures/$1
 }
 
 compile_dir=""
