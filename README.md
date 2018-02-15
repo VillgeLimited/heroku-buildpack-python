@@ -1,10 +1,6 @@
-![python](https://cloud.githubusercontent.com/assets/51578/13712821/b68a42ce-e793-11e5-96b0-d8eb978137ba.png)
+# Heroku Buildpack: Python Django
 
-# Heroku Buildpack: Python
-
-[![Build Status](https://travis-ci.org/heroku/heroku-buildpack-python.svg?branch=master)](https://travis-ci.org/heroku/heroku-buildpack-python)
-
-This is the official [Heroku buildpack](https://devcenter.heroku.com/articles/buildpacks) for Python apps, powered by [Pipenv](http://docs.pipenv.org/en/latest/), [pip](https://pip.pypa.io/) and other excellent software.
+This is a custom fork of the official [Heroku buildpack](https://devcenter.heroku.com/articles/buildpacks) for Python apps, powered by [Pipenv](http://docs.pipenv.org/en/latest/), [pip](https://pip.pypa.io/) and other excellent software.
 
 Recommended web frameworks include **Django** and **Flask**. The recommended webserver is **Gunicorn**. There are no restrictions around what software can be used (as long as it's pip-installable). Web processes must bind to `$PORT`, and only the HTTP protocol is permitted for incoming connections.
 
@@ -18,7 +14,7 @@ Deploying a Python application couldn't be easier:
     $ ls
     Pipfile		Procfile	web.py
 
-    $ heroku create --buildpack heroku/python
+    $ heroku create --buildpack https://github.com/VillgeLimited/heroku-buildpack-python-django.git
 
     $ git push heroku master
     …
@@ -32,10 +28,6 @@ Deploying a Python application couldn't be easier:
            Procfile declares types -> (none)
 
 A `Pipfile` or `requirements.txt` must be present at the root of your application's repository.
-
-You can also specify the latest production release of this buildpack for upcoming builds of an existing application:
-
-    $ heroku buildpacks:set heroku/python
 
 
 Specify a Python Runtime
@@ -62,3 +54,12 @@ Runtime options include:
 - `python-2.7.14`
 - `pypy-5.7.1` (unsupported, experimental)
 - `pypy3-5.5.1` (unsupported, experimental)
+
+
+Specify a Django Project
+------------------------
+
+Specific Python `requirements.txt` file and `manage.py` files can be specified for a contained Django project within a subfolder by setting the environment variable `DJANGO_PROJ`
+
+    $ export DJANGO_PROJ=myproj
+

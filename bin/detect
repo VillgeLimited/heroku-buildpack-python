@@ -14,8 +14,12 @@
 
 BUILD_DIR=$1
 
+# *Any* requirements file
+REQUIREMENTS_FILE=$(cd "$BUILD_DIR" && find . -maxdepth 3 -type f -name 'requirements.txt' | head -1)
+REQUIREMENTS_FILE=${REQUIREMENTS_FILE:2}
+
 # Exit early if app is clearly not Python.
-if [ ! -f "$BUILD_DIR/requirements.txt" ] && [ ! -f "$BUILD_DIR/setup.py" ] && [ ! -f "$BUILD_DIR/Pipfile" ]; then
+if [ ! -f "$BUILD_DIR/$REQUIREMENTS_FILE" ] && [ ! -f "$BUILD_DIR/setup.py" ] && [ ! -f "$BUILD_DIR/Pipfile" ]; then
   exit 1
 fi
 
