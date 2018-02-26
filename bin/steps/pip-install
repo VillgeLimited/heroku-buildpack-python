@@ -13,7 +13,14 @@ if [ ! "$SKIP_PIP_INSTALL" ]; then
     # Measure that we're using pip.
     mcount "tool.pip"
 
+    puts-step "     from $DJANGO_PROJ/requirements.txt"
     /app/.heroku/python/bin/pip install -r "$DJANGO_PROJ/requirements.txt" --exists-action=w --src=/app/.heroku/src --disable-pip-version-check --no-cache-dir 2>&1 | tee "$WARNINGS_LOG" | cleanup | indent
+    for dependency in "${DEPENDENCIES[@]}"
+    do
+        puts-step "     from $dependency/requirements.txt"
+        /app/.heroku/python/bin/pip install -r "$dependency/requirements.txt" --exists-action=w --src=/app/.heroku/src --disable-pip-version-check --no-cache-dir 2>&1 | tee "$WARNINGS_LOG" | cleanup | indent
+    done
+
     PIP_STATUS="${PIPESTATUS[0]}"
     set -e
 
@@ -22,7 +29,6 @@ if [ ! "$SKIP_PIP_INSTALL" ]; then
     if [[ ! $PIP_STATUS -eq 0 ]]; then
         exit 1
     fi
-
 
     # Smart Requirements handling
     cp $DJANGO_PROJ/requirements.txt .heroku/python/requirements-declared.txt
