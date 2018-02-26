@@ -100,7 +100,7 @@ if [[ ! -f Procfile ]]; then
   puts-warn 'Learn more: https://devcenter.heroku.com/articles/procfile'
 fi
 
-WHITELIST_REGEX='^(DJANGO_PROJ)$'
+WHITELIST_REGEX='^(DJANGO_PROJ|DEPENDENCIES)$'
 
 if [ -d "$ENV_DIR" ]; then
   for e in $(ls $ENV_DIR); do
@@ -121,7 +121,12 @@ else
     puts-step "Django app configured: $DJANGO_PROJ"
 fi
 
+if [ "$DEPENDENCIES" ]; then
+    puts-step "Python app requirements dependencies: $DEPENDENCIES"
+fi
+
 export DJANGO_PROJ
+export DEPENDENCIES
 
 # Prepare the cache.
 mkdir -p "$CACHE_DIR"
